@@ -5,6 +5,9 @@
     "virtualMachines_myVM_adminPassword": {
       "type": "securestring"
     },
+    "virtualMachines_myVM_adminUser": {
+      "type": "string"
+    },
     "virtualMachines_myVM_name": {
       "defaultValue": null,
       "type": "string"
@@ -22,10 +25,6 @@
       "type": "string"
     },
     "storageAccounts_frvstore_name": {
-      "defaultValue": null,
-      "type": "string"
-    },
-    "extensions_BGInfo_name": {
       "defaultValue": null,
       "type": "string"
     }
@@ -48,6 +47,18 @@
             "sku": "2012-R2-Datacenter",
             "version": "latest"
           },
+          "dataDisks": [
+            {
+              "name": "datadisk1",
+              "lun": 0,
+              "vhd": {
+                "uri": "[concat('https', '://', parameters('storageAccounts_frvstore_name'), '.blob.core.windows.net', '/vhds/dataDisk1.vhd')]"
+              },
+              "createOption": "Empty",
+              "caching": "None",
+              "diskSizeGB": "10"
+            }
+          ],
           "osDisk": {
             "name": "myOSDisk1",
             "createOption": "FromImage",
@@ -55,12 +66,11 @@
               "uri": "[concat('https', '://', parameters('storageAccounts_frvstore_name'), '.blob.core.windows.net', '/vhds/myOsDisk1.vhd')]"
             },
             "caching": "ReadWrite"
-          },
-          "dataDisks": []
+          }
         },
         "osProfile": {
           "computerName": "[parameters('virtualMachines_myVM_name')]",
-          "adminUsername": "frvillau",
+          "adminUsername": "[parameters('virtualMachines_myVM_adminUser')]",
           "windowsConfiguration": {
             "provisionVMAgent": true,
             "enableAutomaticUpdates": true
@@ -166,14 +176,16 @@
     },
     {
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[parameters('extensions_BGInfo_name')]",
+      "name": "[concat(parameters('virtualMachines_myVM_name'), '/BGInfo')]",
       "apiVersion": "2016-03-30",
       "location": "westeurope",
       "properties": {
         "publisher": "Microsoft.Compute",
         "type": "BGInfo",
         "typeHandlerVersion": "2.1",
-        "autoUpgradeMinorVersion": true
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+        }
       },
       "resources": [],
       "dependsOn": [
