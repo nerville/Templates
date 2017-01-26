@@ -1,0 +1,174 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "virtualMachines_myVM_adminPassword": {
+      "type": "securestring"
+    },
+    "virtualMachines_myVM_adminUser": {
+      "type": "string"
+    },
+    "virtualMachines_myVM_name": {
+      "defaultValue": null,
+      "type": "string"
+    },
+    "networkInterfaces_myNIC_name": {
+      "defaultValue": null,
+      "type": "string"
+    },
+    "publicIPAddresses_myPublicIp_name": {
+      "defaultValue": null,
+      "type": "string"
+    },
+    "virtualNetworks_myVnet_name": {
+      "defaultValue": null,
+      "type": "string"
+    },
+    "storageAccounts_frvstore2_name": {
+      "defaultValue": null,
+      "type": "string"
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[parameters('virtualMachines_myVM_name')]",
+      "apiVersion": "2015-06-15",
+      "location": "westeurope",
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "Standard_DS1_v2"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "credativ",
+            "offer": "debian",
+            "sku": "8",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "linuxvm",
+            "createOption": "FromImage",
+            "vhd": {
+              "uri": "[concat('https', '://', parameters('storageAccounts_frvstore2_name'), '.blob.core.windows.net', '/vhds/linuxvm.vhd')]"
+            },
+            "caching": "ReadWrite"
+          },
+          "dataDisks": [
+            {
+              "name": "datadisk1",
+              "lun": 0,
+              "vhd": {
+                "uri": "[concat('https', '://', parameters('storageAccounts_frvstore2_name'), '.blob.core.windows.net', '/vhds/dataDisk1.vhd')]"
+              },
+              "createOption": "Empty",
+              "caching": "None",
+              "diskSizeGB": "10"
+            }
+          ]
+        },
+        "osProfile": {
+          "computerName": "linuxVM",
+          "adminUsername": "frvillau",
+          "secrets": [],
+          "adminPassword": "[parameters('virtualMachines_myVM_adminPassword')]"
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_myNIC_name'))]"
+            }
+          ]
+        }
+      },
+      "resources": [],
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_frvstore2_name'))]",
+        "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_myNIC_name'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[parameters('networkInterfaces_myNIC_name')]",
+      "apiVersion": "2016-03-30",
+      "location": "westeurope",
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAddress": "10.0.0.4",
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_myPublicIp_name'))]"
+              },
+              "subnet": {
+                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_myVnet_name')), '/subnets/mySubnet')]"
+              }
+            }
+          }
+        ],
+        "dnsSettings": {
+          "dnsServers": []
+        },
+        "enableIPForwarding": false
+      },
+      "resources": [],
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_myPublicIp_name'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_myVnet_name'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[parameters('publicIPAddresses_myPublicIp_name')]",
+      "apiVersion": "2016-03-30",
+      "location": "westeurope",
+      "properties": {
+        "publicIPAllocationMethod": "Dynamic",
+        "idleTimeoutInMinutes": 4
+      },
+      "resources": [],
+      "dependsOn": []
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[parameters('virtualNetworks_myVnet_name')]",
+      "apiVersion": "2016-03-30",
+      "location": "westeurope",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "10.0.0.0/16"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "mySubnet",
+            "properties": {
+              "addressPrefix": "10.0.0.0/24"
+            }
+          }
+        ]
+      },
+      "resources": [],
+      "dependsOn": []
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "sku": {
+        "name": "Standard_LRS",
+        "tier": "Standard"
+      },
+      "kind": "Storage",
+      "name": "[parameters('storageAccounts_frvstore2_name')]",
+      "apiVersion": "2016-01-01",
+      "location": "westeurope",
+      "tags": {},
+      "properties": {},
+      "resources": [],
+      "dependsOn": []
+    }
+  ]
+}
