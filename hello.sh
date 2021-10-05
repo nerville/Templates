@@ -15,5 +15,5 @@ if [ -e /etc/debian_version ]; then
     apt-get -y install git default-jre
   fi
 fi
-$HOSTNAME=`hostname`
+HOSTNAME=$(hostname)
 hostname -b $HOSTNAME.buildbot.fusionforge.on.azure
