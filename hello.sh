@@ -4,7 +4,7 @@ if [ -e /etc/debian_version ]; then
   while fuser /var/lib/apt/lists/lock >/dev/null 2>&1 ; do
     sleep 5;
   done
-  apt-get update && apt-get -y install git default-jre
+  apt-get update && apt-get upgrade && apt-get -y install git default-jre
 else
   yum install git
 fi
