@@ -11,5 +11,3 @@ fi
 #force sudoers to handle waagent ...
 echo 'slave ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/zzz-slave
 chmod 440 /etc/sudoers.d/zzz-slave
-HOSTNAME=$(hostname)
-hostname -b $HOSTNAME.buildbot.fusionforge.on.azure
