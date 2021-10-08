@@ -19,7 +19,7 @@ if [ -e /etc/debian_version ]; then
   fi
   apt-get install git
 else
-  yum install git
+  yum -y update && yum -y install git
 fi
 #force sudoers to handle waagent ...
 echo 'slave ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/zzz-slave
