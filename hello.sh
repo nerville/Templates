@@ -17,7 +17,7 @@ if [ -e /etc/debian_version ]; then
   else
     apt-get update && apt-get -y upgrade && apt-get -y install default-jre
   fi
-  apt-get install git
+  apt-get -y install git
 else
   yum -y update && yum -y install git java-1.8.0-openjdk
 fi
