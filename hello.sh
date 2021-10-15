@@ -8,6 +8,7 @@ if [ -e /etc/debian_version ]; then
 else
   yum -y install git java-1.8.0-openjdk
   sed -i -e '/secure_path/ s[=.*[&:/usr/local/share/fusionforge/bin:/usr/local/bin[' /etc/sudoers
+  sed -i -e 's/^.*env_keep.*$//' /etc/sudoers
 fi
 #force sudoers to handle waagent ...
 echo 'slave ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/zzz-slave
