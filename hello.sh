@@ -7,7 +7,7 @@ if [ -e /etc/debian_version ]; then
   apt-get update && apt-get -y upgrade && apt-get -y install default-jre git
 else
   yum -y install git java-1.8.0-openjdk
-  sed -i -e 's/^.*secure_path.*$/Defaults secure_path \/sbin:\/bin:\/usr\/sbin:\/usr\/bin:\/usr\/local\/share\/fusionforge\/bin/' /etc/sudoers
+  sed -i -e '/secure_path/ s[=.*[&:/usr/local/share/fusionforge/bin[' /etc/sudoers
 fi
 #force sudoers to handle waagent ...
 echo 'slave ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/zzz-slave
