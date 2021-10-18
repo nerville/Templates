@@ -9,7 +9,7 @@ elif [ -e /etc/centos_version ]; then
   yum -y install git java-1.8.0-openjdk
   sed -i -e '/secure_path/ s[=.*[&:/usr/local/share/fusionforge/bin:/usr/local/bin[' /etc/sudoers
 else
-  zypper --non-interactive install git java-10-openjdk
+  zypper --non-interactive install git java-11-openjdk
 fi
 #force sudoers to handle waagent ...
 echo 'slave ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/zzz-slave
