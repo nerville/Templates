@@ -5,7 +5,7 @@ if [ -e /etc/debian_version ]; then
     sleep 5;
   done
   apt-get update && apt-get -y upgrade && apt-get -y install default-jre git
-elif [ -e /etc/centos_version ]; then
+elif [ -e /etc/centos-version ]; then
   yum -y install git java-1.8.0-openjdk
   sed -i -e '/secure_path/ s[=.*[&:/usr/local/share/fusionforge/bin:/usr/local/bin[' /etc/sudoers
 else
