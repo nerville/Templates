@@ -9,6 +9,7 @@ if [ -e /etc/debian_version ]; then
 elif [ -e /etc/centos-release ]; then
   yum -y install git java-1.8.0-openjdk
   sed -i -e '/secure_path/ s[=.*[&:/usr/local/share/fusionforge/bin:/usr/local/bin[' /etc/sudoers
+  setsebool -P httpd_can_network_connect_db 1
 else
   zypper --non-interactive install git java-11-openjdk
 fi
