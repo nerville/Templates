@@ -4,7 +4,8 @@ if [ -e /etc/debian_version ]; then
   while fuser /var/lib/apt/lists/lock >/dev/null 2>&1 ; do
     sleep 5;
   done
-  echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/99-retries
+  echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/98-retries
+  echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apf.conf.d/99-checkvalidunit
   apt-get update && apt-get -y upgrade && apt-get -y install default-jre git
 elif [ -e /etc/centos-release ]; then
   yum -y install git java-1.8.0-openjdk
